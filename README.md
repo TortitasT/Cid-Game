@@ -4,6 +4,7 @@ This repo will contain the source code for the game Mio Cid, a medieval multipla
 
 Resources
 --------------------
+- The Unity version will be _2020.3.32f1_
 - For multiplayer the game will use a _Node 16.14.2_ server hosted on [another repo](https://github.com/TortitasT/Cid-Server) on this account.
 - To make the storyline the game will use ink with it's editor [inky](https://www.inklestudios.com/ink/), a handy and flexible storyline maker with integration in unity so the players can make their own campaigns.
 - To make the campaigns the players will need a map editor, it will be coded to store tiles on a json and load them on runtime. Included on base game (this project).
