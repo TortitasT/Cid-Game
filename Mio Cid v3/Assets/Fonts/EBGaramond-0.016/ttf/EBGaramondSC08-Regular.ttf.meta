@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 3d6e41ec88438634e80fda6cc9116f81
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - EB Garamond SC
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 0aedf7f6bbc591d4ea3509f0ad26d0fc, type: 3}
+  - {fileID: 12800000, guid: 285047ba4e8ee984499debbe15d5a7b0, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

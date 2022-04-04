@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: def1bb70cf1cb754ab5aba8d982bd0d8
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - EB Garamond Initials Fill2
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: b25d00d34604fc64e97a44f0a925edf1, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
