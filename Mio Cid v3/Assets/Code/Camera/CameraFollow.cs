@@ -12,7 +12,7 @@ public class CameraFollow : MonoBehaviour
 
     private void FixedUpdate() {
         Vector3 targetPosition = target.position + offset;
-        targetPosition.z = -10;
+        targetPosition.z = target.position.z-100; // ZasY for camera
 
         transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothness);    
 
