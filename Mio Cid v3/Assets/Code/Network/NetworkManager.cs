@@ -85,7 +85,7 @@ public class NetworkManager : MonoBehaviour
 
             GetPlayer(responsePars.id).GetComponent<NetworkPlayer>().player.pos = new Vector2Data(responsePars.pos.x, responsePars.pos.y);
 
-            Debug.Log($"{responsePars.id} goes to: {responsePars.pos.x}, {responsePars.pos.y}");
+            // Debug.Log($"{responsePars.id} goes to: {responsePars.pos.x}, {responsePars.pos.y}");
         });
     }
 

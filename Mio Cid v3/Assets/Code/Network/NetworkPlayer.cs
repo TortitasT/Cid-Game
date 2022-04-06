@@ -7,6 +7,7 @@ public class NetworkPlayer : MonoBehaviour
     public Player player;
 
     private void Update() {
-        GetComponent<Rigidbody2D>().position = new Vector3(player.pos.x, player.pos.y, 0);
+        GetComponent<Rigidbody2D>().MovePosition(new Vector3(player.pos.x, player.pos.y, 0));
+        Debug.Log(GetComponent<Rigidbody2D>().velocity);
     }
 }
