@@ -2,27 +2,72 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Firesplash.UnityAssets.SocketIO;
+using Newtonsoft.Json;
 
 public class NetworkManager : MonoBehaviour
 {
+    [Header("Connection data")]
     [SerializeField] private string address = "localhost";
     [SerializeField] private string port = "28962";
-    private string socketIOAddress = "";
+
+
+    [Header("Player character data")]
+    [SerializeField] private string dataName = "Cid";
+    [SerializeField] private int dataLevel = 1;
+    [SerializeField] private float dataLevelProgress = 0f;
+    [SerializeField] private Vector2Data dataPos = new Vector2Data(0, 0);
+
     private SocketIOCommunicator io;
+    private string id = "0";
+    private Character character;
+    private Vector2Data pos;
+    private Player player;
+    private Transform playerTransform;
 
     private void Start()
     {
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         io = GetComponent<SocketIOCommunicator>();
 
-        socketIOAddress = address + ":" + port;
-        io.socketIOAddress = socketIOAddress;
+        Connect(
+            address: address,
+            port: port
+        );
 
-        io.Instance.Connect();
-
+        //Events
         io.Instance.On("connect", (a) =>
         {
-            io.Instance.Emit("config", "{character: {name:clo}, pos:{x:1, y:2}}");
-        });
+            //Mock Player
+            id = io.Instance.SocketID;
+            character = new Character(
+                name: dataName,
+                level: dataLevel,
+                levelProgress: dataLevelProgress
+            );
+            player = new Player(
+                id: id,
+                character: character,
+                pos: dataPos
+            );
 
+            // Send player data to server
+            io.Instance.Emit("config", JsonConvert.SerializeObject(player), false);
+        });
+    }
+
+    private void FixedUpdate() {
+        if(io.Instance.IsConnected()){
+            //Update local position variable
+            dataPos = new Vector2Data(playerTransform.position.x, playerTransform.position.y);
+            //Send update data
+            io.Instance.Emit("update", "{\"pos\":"+JsonConvert.SerializeObject(dataPos)+"}", false);
+        }
+    }
+
+    private void Connect(string address, string port)
+    {
+        string socketIOAddress = address + ":" + port;
+        io.socketIOAddress = socketIOAddress;
+        io.Instance.Connect();
     }
 }

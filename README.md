@@ -10,6 +10,7 @@ Resources
 - To make the campaigns the players will need a map editor, it will be coded to store tiles on a json and load them on runtime. Included on base game (this project).
 - To make the graphics we use a technique from the first two diablo games where we make 3d models (using [picoCAD](https://johanpeitz.itch.io/picocad)) and we import them into blender to animate them or whatever, then we render the frames into images for 12 directions.
 - To get fonts [OpenFoundry](https://open-foundry.com/fonts)
+- Json tool for Unity C# [Newtonsoft-Json](https://github.com/jilleJr/Newtonsoft.Json-for-Unity) [Documentation](https://www.newtonsoft.com/json/help/html/Introduction.htm), to import it import package from git and type _com.unity.nuget.newtonsoft-json@3.0_ 
 
 Credits
 -------

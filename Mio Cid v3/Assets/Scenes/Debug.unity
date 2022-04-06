@@ -675,8 +675,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b763dbeebef1e1f43a80b3563b7178a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  address: localhost
+  address: helios.local
   port: 28962
+  dataName: Cid
+  dataLevel: 1
+  dataLevelProgress: 0
 --- !u!1 &1634242916
 GameObject:
   m_ObjectHideFlags: 0
