@@ -17,12 +17,16 @@ public class NetworkManager : MonoBehaviour
     [SerializeField] private float dataLevelProgress = 0f;
     [SerializeField] private Vector2Data dataPos = new Vector2Data(0, 0);
 
+    [Header("Misc")]
+    [SerializeField] private GameObject networkPlayerPrefab;
+
     private SocketIOCommunicator io;
     private string id = "0";
     private Character character;
     private Vector2Data pos;
     private Player player;
     private Transform playerTransform;
+    private List<GameObject> networkPlayers = new List<GameObject>();
 
     private void Start()
     {
@@ -35,7 +39,7 @@ public class NetworkManager : MonoBehaviour
         );
 
         //Events
-        io.Instance.On("connect", (a) =>
+        io.Instance.On("connect", (response) =>
         {
             //Mock Player
             id = io.Instance.SocketID;
@@ -53,14 +57,54 @@ public class NetworkManager : MonoBehaviour
             // Send player data to server
             io.Instance.Emit("config", JsonConvert.SerializeObject(player), false);
         });
+
+        io.Instance.On("registered", (response) =>
+        {
+            Registered responsePars = JsonConvert.DeserializeObject<Registered>(response);
+
+            GameObject newPlayer = CreatePlayer(responsePars.player);
+        });
+
+        io.Instance.On("currentPlayers", (response) =>
+        {
+            CurrentPlayers responsePars = JsonConvert.DeserializeObject<CurrentPlayers>(response);
+
+            foreach (Player player in responsePars.players)
+            {
+                if (player.id != null)
+                {
+
+                    CreatePlayer(player);
+                }
+            }
+        });
+
+        io.Instance.On("updated", (response) =>
+        {
+            Updated responsePars = JsonConvert.DeserializeObject<Updated>(response);
+
+            GetPlayer(responsePars.id).GetComponent<NetworkPlayer>().player.pos = new Vector2Data(responsePars.pos.x, responsePars.pos.y);
+
+            Debug.Log($"{responsePars.id} goes to: {responsePars.pos.x}, {responsePars.pos.y}");
+        });
     }
 
-    private void FixedUpdate() {
-        if(io.Instance.IsConnected()){
+    private void FixedUpdate()
+    {
+        if (io.Instance.IsConnected())
+        {
             //Update local position variable
             dataPos = new Vector2Data(playerTransform.position.x, playerTransform.position.y);
             //Send update data
-            io.Instance.Emit("update", "{\"pos\":"+JsonConvert.SerializeObject(dataPos)+"}", false);
+            io.Instance.Emit("update", "{\"pos\":" + JsonConvert.SerializeObject(dataPos) + "}", false);
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown("d"))
+        {
+            Debug.Log(networkPlayers);
         }
     }
 
@@ -69,5 +113,28 @@ public class NetworkManager : MonoBehaviour
         string socketIOAddress = address + ":" + port;
         io.socketIOAddress = socketIOAddress;
         io.Instance.Connect();
+    }
+    private GameObject GetPlayer(string id)
+    {
+        foreach (GameObject player in networkPlayers)
+        {
+            if (player.GetComponent<NetworkPlayer>().player.id == id)
+            {
+                return player;
+            }
+        }
+        return null;
+    }
+    private GameObject CreatePlayer(Player player)
+    {
+        GameObject newPlayer = GameObject.Instantiate<GameObject>(networkPlayerPrefab);
+        newPlayer.GetComponent<NetworkPlayer>().player = player;
+
+        if (!networkPlayers.Contains(newPlayer))
+        {  
+            networkPlayers.Add(newPlayer);
+        }
+
+        return newPlayer;
     }
 }
