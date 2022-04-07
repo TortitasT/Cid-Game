@@ -675,7 +675,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b763dbeebef1e1f43a80b3563b7178a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  address: helios.local
+  address: localhost
   port: 28962
   dataName: Cid
   dataLevel: 1
@@ -962,6 +962,14 @@ PrefabInstance:
     - target: {fileID: 664863760615431560, guid: ec381d01c6e1f4845a24d0ecf135716b, type: 3}
       propertyPath: m_Constraints
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 664863760615431561, guid: ec381d01c6e1f4845a24d0ecf135716b, type: 3}
+      propertyPath: draw
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 664863760615431561, guid: ec381d01c6e1f4845a24d0ecf135716b, type: 3}
+      propertyPath: isLocal
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 664863760615431572, guid: ec381d01c6e1f4845a24d0ecf135716b, type: 3}
       propertyPath: m_Name

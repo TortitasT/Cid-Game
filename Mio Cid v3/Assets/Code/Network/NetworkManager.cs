@@ -28,11 +28,14 @@ public class NetworkManager : MonoBehaviour
     private Transform playerTransform;
     private List<GameObject> networkPlayers = new List<GameObject>();
 
+    private void Awake()
+    {
+        io = GetComponent<SocketIOCommunicator>();
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        dataPos = new Vector2Data(playerTransform.position.x, playerTransform.position.y);
+    }
     private void Start()
     {
-        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-        io = GetComponent<SocketIOCommunicator>();
-
         Connect(
             address: address,
             port: port
@@ -84,8 +87,13 @@ public class NetworkManager : MonoBehaviour
             Updated responsePars = JsonConvert.DeserializeObject<Updated>(response);
 
             GetPlayer(responsePars.id).GetComponent<NetworkPlayer>().player.pos = new Vector2Data(responsePars.pos.x, responsePars.pos.y);
+        });
 
-            // Debug.Log($"{responsePars.id} goes to: {responsePars.pos.x}, {responsePars.pos.y}");
+        io.Instance.On("disconnected", (response) =>
+        {
+            Disconnected responsePars = JsonConvert.DeserializeObject<Disconnected>(response);
+
+            PlayerLeave(responsePars.id);
         });
     }
 
@@ -97,14 +105,6 @@ public class NetworkManager : MonoBehaviour
             dataPos = new Vector2Data(playerTransform.position.x, playerTransform.position.y);
             //Send update data
             io.Instance.Emit("update", "{\"pos\":" + JsonConvert.SerializeObject(dataPos) + "}", false);
-        }
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown("d"))
-        {
-            Debug.Log(networkPlayers);
         }
     }
 
@@ -125,13 +125,22 @@ public class NetworkManager : MonoBehaviour
         }
         return null;
     }
+    private void PlayerLeave(string id)
+    {
+        GameObject player = GetPlayer(id);
+        if (player != null)
+        {
+            networkPlayers.Remove(player);
+            Destroy(player);
+        }
+    }
     private GameObject CreatePlayer(Player player)
     {
         GameObject newPlayer = GameObject.Instantiate<GameObject>(networkPlayerPrefab);
         newPlayer.GetComponent<NetworkPlayer>().player = player;
 
         if (!networkPlayers.Contains(newPlayer))
-        {  
+        {
             networkPlayers.Add(newPlayer);
         }
 

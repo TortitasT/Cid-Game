@@ -4,27 +4,24 @@ using UnityEngine;
 
 public class AnimationManager : MonoBehaviour
 {
+    [SerializeField] private bool isLocal = false;
+    [SerializeField] private Animator animator;
+
     private Rigidbody2D rb;
     private Vector2 vel = Vector2.zero;
-
-    private Vector2 velV2 = Vector2.zero;
+    public Vector2 velV2 = Vector2.zero;
     private float velMa = 0f;
-
-    private Vector3 oldPos = Vector3.zero;
-
-
-    [SerializeField] private Animator animator;
+    private bool stopped = false;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        oldPos = transform.position;
     }
     private void Update()
     {
-        if (!Mathf.Approximately(velMa, 0))
+        if (!stopped)
         { // If the player is moving set the animation, if not, leave it as it was to keep facing that way.
-            vel = velV2;
+            vel = velV2.normalized;
             animator.SetBool("isWalking", true);
         }
         else
@@ -35,10 +32,30 @@ public class AnimationManager : MonoBehaviour
         animator.SetFloat("VelX", vel.x);
         animator.SetFloat("VelY", vel.y);
     }
+    // void OnGUI()
+    // {
+    //     if (!isLocal)
+    //     {
+    //         GUILayout.Label(vel.ToString());
+    //     }
+    // }
+
     private void FixedUpdate()
     {
-        velV2 = (transform.position - oldPos) / Time.fixedDeltaTime;
-        velMa = (transform.position - oldPos).magnitude / Time.fixedDeltaTime;
-        oldPos = transform.position;
+        if (isLocal)
+        {
+            velV2 = rb.velocity;
+        } // If it's a networkPlayer the script will set velV2
+
+        velMa = Mathf.Round(velV2.magnitude * 10f);
+
+        if (Mathf.Approximately(velMa, 0f))
+        {
+            stopped = true;
+        }
+        else
+        {
+            stopped = false;
+        }
     }
 }
