@@ -86,7 +86,10 @@ public class NetworkManager : MonoBehaviour
         {
             Updated responsePars = JsonConvert.DeserializeObject<Updated>(response);
 
-            GetPlayer(responsePars.id).GetComponent<NetworkPlayer>().player.pos = new Vector2Data(responsePars.pos.x, responsePars.pos.y);
+            if (GetPlayer(responsePars.id))
+            {
+                GetPlayer(responsePars.id).GetComponent<NetworkPlayer>().player.pos = new Vector2Data(responsePars.pos.x, responsePars.pos.y);
+            }
         });
 
         io.Instance.On("disconnected", (response) =>
