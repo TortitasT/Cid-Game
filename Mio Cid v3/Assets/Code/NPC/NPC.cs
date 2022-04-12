@@ -4,23 +4,22 @@ using UnityEngine;
 
 public class NPC : MonoBehaviour, IInteract
 {
-    [SerializeField] private Dialog dialog = null;
+    [SerializeField] private List<string> titles;
+    [SerializeField] private List<string> contents;
+    private Dialog dialog = null;
 
     private void Start()
     {
-        string title1 = "title1";
-        string title2 = "title2";
-
-        string content1 = "content1";
-        string content2 = "content2";
-
-        dialog = new Dialog(new List<string> { title1, title2 }, new List<string> { content1, content2 });
+        dialog = new Dialog(titles, contents);
     }
-    public void Interact()
+    public bool Interact()
     {
-        if (!DialogManager.Instance.IsActive())
+        Debug.Log(dialog.contents.Count);
+        if (!DialogManager.Instance.IsActive() && dialog.contents.Count != 0)
         {
             DialogManager.Instance.BeginDialog(dialog, this.transform);
+            return true;
         }
+        return false;
     }
 }

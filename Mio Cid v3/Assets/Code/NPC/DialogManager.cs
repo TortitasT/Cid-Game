@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Febucci.UI;
 
 public class DialogManager : MonoBehaviour
 {
@@ -10,12 +11,13 @@ public class DialogManager : MonoBehaviour
     [SerializeField] GameObject canvas;
     [SerializeField] GameObject title;
     [SerializeField] GameObject content;
+    [SerializeField] GameObject box;
 
     private int index = 0;
     private bool isStarting = false;
     private bool isActive = false;
     private Dialog dialog = null;
-
+    bool can = false;
     private void Awake()
     {
         canvas.SetActive(false);
@@ -35,11 +37,16 @@ public class DialogManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) && isActive)
         {
-            if (isActive)
+            can = true;
+        }
+        if (Input.GetKeyUp(KeyCode.E))
+        {
+            if (isActive && can)
             {
                 NextDialog();
+                can = false;
             }
         }
     }
@@ -50,7 +57,7 @@ public class DialogManager : MonoBehaviour
     }
     private IEnumerator SetActive()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.1f);
         isActive = true;
         isStarting = false;
     }
@@ -63,12 +70,13 @@ public class DialogManager : MonoBehaviour
             index = 0;
             this.dialog = dialog;
 
-            canvas.SetActive(true);
+            ShowDialog();
             GetComponent<CameraFollow>().SetTarget(transform);
-            GetComponent<CameraFollow>().SetZoom(15f);
+            GetComponent<CameraFollow>().SetZoom(20f);
+            GetComponent<CameraFollow>().SetOffset(new Vector3(0, -3, 0));
 
             title.GetComponent<TextMeshProUGUI>().text = this.dialog.titles[index];
-            content.GetComponent<TextMeshProUGUI>().text = this.dialog.contents[index];
+            content.GetComponent<TextAnimatorPlayer>().ShowText(this.dialog.contents[index]);
 
             StateManager.Instance.SetState(StateManager.State.Talking);
             StartCoroutine(SetActive());
@@ -89,16 +97,34 @@ public class DialogManager : MonoBehaviour
             else
             {
                 title.GetComponent<TextMeshProUGUI>().text = dialog.titles[index];
-                content.GetComponent<TextMeshProUGUI>().text = dialog.contents[index];
+                content.GetComponent<TextAnimatorPlayer>().ShowText(dialog.contents[index]);
             }
         }
     }
 
     public void EndDialog()
     {
-        isActive = false;
-        canvas.SetActive(false);
+        // isActive = false & state set on end of hide animation below
+        HideDialog();
         GetComponent<CameraFollow>().Reset();
-        StateManager.Instance.SetState(StateManager.State.Idle);
+        StateManager.Instance.gameObject.GetComponent<AnimationManager>().StopLooking();
+    }
+
+    private void ShowDialog()
+    {
+        canvas.SetActive(true);
+        LeanTween.scale(box, new Vector3(0, 0, 0), 0f);
+        LeanTween.scale(box, new Vector3(1, 1, 1), 0.1f);
+    }
+    private void HideDialog()
+    {
+        LeanTween.scale(box, new Vector3(1, 1, 1), 0f);
+        LeanTween.scale(box, new Vector3(0, 0, 0), 0.1f).setOnComplete(() =>
+        {
+            StateManager.Instance.SetState(StateManager.State.Idle);
+            isActive = false;
+
+            canvas.SetActive(false);
+        });
     }
 }

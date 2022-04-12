@@ -40,4 +40,9 @@ public class MovementManager : MonoBehaviour
 
         rb.velocity = moveDir * playerSpeed;
     }
+
+    public void Stop()
+    {
+        target = transform.position;
+    }
 }

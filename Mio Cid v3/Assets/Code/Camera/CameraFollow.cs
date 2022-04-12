@@ -39,5 +39,6 @@ public class CameraFollow : MonoBehaviour
     {
         target = playerTarget;
         targetZoom = 30f;
+        offset = Vector3.zero;
     }
 }
