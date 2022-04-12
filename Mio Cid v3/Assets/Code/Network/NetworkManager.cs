@@ -28,18 +28,29 @@ public class NetworkManager : MonoBehaviour
     private Transform playerTransform;
     private List<GameObject> networkPlayers = new List<GameObject>();
 
+    public static NetworkManager Instance = null;
+
     private void Awake()
     {
         io = GetComponent<SocketIOCommunicator>();
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         dataPos = new Vector2Data(playerTransform.position.x, playerTransform.position.y);
+
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
     }
     private void Start()
     {
-        Connect(
-            address: address,
-            port: port
-        );
+        // Connect(
+        //     address: address,
+        //     port: port
+        // );
 
         //Events
         io.Instance.On("connect", (response) =>
@@ -111,12 +122,16 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
-    private void Connect(string address, string port)
+    public void Connect(string address, string port)
     {
-        string socketIOAddress = address + ":" + port;
+        io.Instance.Close();
+
+        string socketIOAddress = address + ":" + port + "/socket.io/";
         io.socketIOAddress = socketIOAddress;
+
         io.Instance.Connect();
     }
+
     private GameObject GetPlayer(string id)
     {
         foreach (GameObject player in networkPlayers)

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class Window : MonoBehaviour
@@ -27,12 +28,22 @@ public class Window : MonoBehaviour
 
         return this;
     }
-    public Window CreateButtons()
+    public Window CreateButtons(UnityEngine.Events.UnityAction acceptFunc)
     {
         GameObject input = Instantiate(buttonsPrefab);
         input.transform.SetParent(transform);
         input.transform.localPosition = new Vector3(0, 0, 0);
 
+        if (acceptFunc != null)
+        {
+            input.transform.GetChild(1).GetComponent<Button>().onClick.AddListener(acceptFunc);
+        }
+        input.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(CloseWindow);
+
         return this;
+    }
+    public void CloseWindow()
+    {
+        Destroy(gameObject);
     }
 }
