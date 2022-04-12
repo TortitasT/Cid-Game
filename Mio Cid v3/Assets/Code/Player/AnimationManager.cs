@@ -12,6 +12,7 @@ public class AnimationManager : MonoBehaviour
     public Vector2 velV2 = Vector2.zero;
     private float velMa = 0f;
     private bool stopped = false;
+    private bool isControlling = true;
 
     private void Start()
     {
@@ -29,17 +30,12 @@ public class AnimationManager : MonoBehaviour
             animator.SetBool("isWalking", false);
         }
 
-        animator.SetFloat("VelX", vel.x);
-        animator.SetFloat("VelY", vel.y);
+        if (isControlling)
+        {
+            animator.SetFloat("VelX", vel.x);
+            animator.SetFloat("VelY", vel.y);
+        }
     }
-    // void OnGUI()
-    // {
-    //     if (!isLocal)
-    //     {
-    //         GUILayout.Label(vel.ToString());
-    //     }
-    // }
-
     private void FixedUpdate()
     {
         if (isLocal)
@@ -57,5 +53,19 @@ public class AnimationManager : MonoBehaviour
         {
             stopped = false;
         }
+    }
+
+    public void LookTowards(Vector2 direction)
+    {
+        isControlling = false;
+
+        direction = direction.normalized;
+
+        animator.SetFloat("VelX", direction.x);
+        animator.SetFloat("VelY", direction.y);
+    }
+    public void StopLooking()
+    {
+        isControlling = true;
     }
 }

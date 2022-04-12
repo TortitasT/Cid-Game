@@ -4,20 +4,35 @@ using UnityEngine;
 
 public class StateManager : MonoBehaviour
 {
-    public enum State {
+    public static StateManager Instance = null;
+
+    public enum State
+    {
         Idle,
-        Walking,
-        Attacking,
+        Talking,
         Menuing,
     };
 
     private State state = State.Idle;
 
     //Public functions
-    public State GetState(){
+    public State GetState()
+    {
         return state;
     }
-    public void SetState(State newState){
+    public void SetState(State newState)
+    {
         state = newState;
+    }
+    private void Start()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
     }
 }
