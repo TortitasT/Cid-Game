@@ -114,12 +114,12 @@ public class DialogManager : MonoBehaviour
     {
         canvas.SetActive(true);
         LeanTween.scale(box, new Vector3(0, 0, 0), 0f);
-        LeanTween.scale(box, new Vector3(1, 1, 1), 0.1f);
+        LeanTween.scale(box, new Vector3(1, 1, 1), 0.3f).setEase(LeanTweenType.easeInOutBack);
     }
     private void HideDialog()
     {
         LeanTween.scale(box, new Vector3(1, 1, 1), 0f);
-        LeanTween.scale(box, new Vector3(0, 0, 0), 0.1f).setOnComplete(() =>
+        LeanTween.scale(box, new Vector3(0, 0, 0), 0.3f).setEase(LeanTweenType.easeInBack).setOnComplete(() =>
         {
             StateManager.Instance.SetState(StateManager.State.Idle);
             isActive = false;

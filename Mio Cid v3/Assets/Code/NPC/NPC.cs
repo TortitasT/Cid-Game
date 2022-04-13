@@ -14,7 +14,6 @@ public class NPC : MonoBehaviour, IInteract
     }
     public bool Interact()
     {
-        Debug.Log(dialog.contents.Count);
         if (!DialogManager.Instance.IsActive() && dialog.contents.Count != 0)
         {
             DialogManager.Instance.BeginDialog(dialog, this.transform);
