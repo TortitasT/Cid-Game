@@ -2,6 +2,8 @@ Mio Cid (unity project)
 ==================================
 This repo will contain the source code for the game Mio Cid, a medieval multiplayer ARPG.
 
+This project now has an [Itch.io page](https://tortitas.itch.io/mio-cid-v3).
+
 Resources
 --------------------
 - The Unity version will be _2020.3.32f1_
