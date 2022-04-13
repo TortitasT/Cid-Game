@@ -44,6 +44,6 @@ public class Window : MonoBehaviour
     }
     public void CloseWindow()
     {
-        Destroy(gameObject);
+        LeanTween.scale(gameObject, Vector2.zero, 0.2f).setEase(LeanTweenType.easeInBack).setOnComplete(() => Destroy(gameObject));
     }
 }

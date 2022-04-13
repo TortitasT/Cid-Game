@@ -17,6 +17,8 @@ public class WimanManager : MonoBehaviour
 
         window.transform.SetParent(wimanPrefab.transform);
         window.transform.localPosition = new Vector3(0, 0, 0);
+        LeanTween.scale(window, Vector2.zero, 0f);
+        LeanTween.scale(window, Vector2.one, 0.2f).setEase(LeanTweenType.easeInOutBack);
 
         return window.GetComponent<Window>();
     }

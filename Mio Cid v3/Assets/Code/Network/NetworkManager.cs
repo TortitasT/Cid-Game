@@ -6,11 +6,6 @@ using Newtonsoft.Json;
 
 public class NetworkManager : MonoBehaviour
 {
-    [Header("Connection data")]
-    [SerializeField] private string address = "localhost";
-    [SerializeField] private string port = "28962";
-
-
     [Header("Player character data")]
     [SerializeField] private string dataName = "Cid";
     [SerializeField] private int dataLevel = 1;
@@ -20,19 +15,19 @@ public class NetworkManager : MonoBehaviour
     [Header("Misc")]
     [SerializeField] private GameObject networkPlayerPrefab;
 
-    private SocketIOCommunicator io;
+    private SocketIOCommunicator io = null;
     private string id = "0";
     private Character character;
     private Vector2Data pos;
     private Player player;
     private Transform playerTransform;
     private List<GameObject> networkPlayers = new List<GameObject>();
+    private bool isConnected = false;
 
     public static NetworkManager Instance = null;
 
     private void Awake()
     {
-        io = GetComponent<SocketIOCommunicator>();
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         dataPos = new Vector2Data(playerTransform.position.x, playerTransform.position.y);
 
@@ -45,7 +40,7 @@ public class NetworkManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    private void Start()
+    private void LoadEvents()
     {
         // Connect(
         //     address: address,
@@ -77,6 +72,7 @@ public class NetworkManager : MonoBehaviour
             Registered responsePars = JsonConvert.DeserializeObject<Registered>(response);
 
             GameObject newPlayer = CreatePlayer(responsePars.player);
+            AlertManager.Instance.Alert("<pend>" + responsePars.player.character.name + " connected 👋</pend>");
         });
 
         io.Instance.On("currentPlayers", (response) =>
@@ -87,10 +83,12 @@ public class NetworkManager : MonoBehaviour
             {
                 if (player.id != null)
                 {
-
                     CreatePlayer(player);
                 }
             }
+
+            AlertManager.Instance.Alert("<bounce>Connected to server 🎉</bounce>");
+            isConnected = true;
         });
 
         io.Instance.On("updated", (response) =>
@@ -109,27 +107,19 @@ public class NetworkManager : MonoBehaviour
 
             PlayerLeave(responsePars.id);
         });
+
+        io.Instance.Connect(); // Connect at the end
     }
 
     private void FixedUpdate()
     {
-        if (io.Instance.IsConnected())
+        if (isConnected)
         {
             //Update local position variable
             dataPos = new Vector2Data(playerTransform.position.x, playerTransform.position.y);
             //Send update data
             io.Instance.Emit("update", "{\"pos\":" + JsonConvert.SerializeObject(dataPos) + "}", false);
         }
-    }
-
-    public void Connect(string address, string port)
-    {
-        io.Instance.Close();
-
-        string socketIOAddress = address + ":" + port + "/socket.io/";
-        io.socketIOAddress = socketIOAddress;
-
-        io.Instance.Connect();
     }
 
     private GameObject GetPlayer(string id)
@@ -163,5 +153,39 @@ public class NetworkManager : MonoBehaviour
         }
 
         return newPlayer;
+    }
+
+    public void Connect(string address, string port)
+    {
+        // OK so the plugin won't work so this is the workaround, just deleting the component and reinstanciating.
+
+        if (GetComponent<SocketIOCommunicator>() != null)
+        {
+            Destroy(GetComponent<SocketIOCommunicator>());
+            this.gameObject.AddComponent<SocketIOCommunicator>();
+        }
+        else
+        {
+            this.gameObject.AddComponent<SocketIOCommunicator>();
+        }
+
+        io = GetComponent<SocketIOCommunicator>();
+
+        io.socketIOAddress = address + ":" + port + "/socket.io/";
+        io.autoConnect = false;
+        io.autoReconnect = true;
+        io.secureConnection = false;
+
+        LoadEvents();
+    }
+
+    public void Disconnect()
+    {
+        isConnected = false;
+
+        if (GetComponent<SocketIOCommunicator>() != null)
+        {
+            Destroy(GetComponent<SocketIOCommunicator>());
+        }
     }
 }
