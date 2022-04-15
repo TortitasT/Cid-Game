@@ -42,7 +42,6 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
-*.asset
 *DS_Store
 
 # Unity3D generated meta files
