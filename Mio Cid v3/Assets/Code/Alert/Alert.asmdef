@@ -1,8 +1,9 @@
 {
-    "name": "Mod",
+    "name": "Alert",
     "rootNamespace": "",
     "references": [
-        "GUID:53170bea9c3edcc4c9143bfde39f9431"
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:a456dab1ae563b5438033d17882e0195"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

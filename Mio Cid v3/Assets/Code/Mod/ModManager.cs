@@ -7,7 +7,21 @@ public class ModManager : MonoBehaviour
 {
     public static ModManager instance;
 
-    private Dictionary<string, string> mods = new Dictionary<string, string>();
+    // private Dictionary<string, string> mods = new Dictionary<string, string>();
+    public struct Mod
+    {
+        public string name;
+
+        public string dir;
+
+        public Mod(string name, string dir)
+        {
+            this.name = name;
+            this.dir = dir;
+        }
+    }
+
+    public List<Mod> mods = new List<Mod>();
 
     void Awake()
     {
@@ -31,25 +45,36 @@ public class ModManager : MonoBehaviour
         foreach (string modDir in scannedMods)
         {
             string modName = Path.GetFileName(modDir);
-            mods.Add (modName, modDir);
-
-            Debug.Log("Found " + modName + " in " + modDir);
+            AddMod (modName, modDir);
         }
+    }
+
+    private IEnumerator Start()
+    {
+        yield return new WaitForSeconds(1f);
+
+        foreach (Mod mod in mods)
+        {
+            AlertManager.Instance.Alert("Load " + mod.name);
+        }
+        yield return new WaitForSeconds(0.5f);
+
+        AlertManager.Instance.Alert("Loaded all mods!");
     }
 
     public string[] GetAnimations()
     {
         List<string> animations = new List<string>();
 
-        foreach (string modName in mods.Keys)
+        foreach (Mod mod in mods)
         {
-            string modDir = mods[modName];
+            string modDir = mod.name;
 
             string[] modAnimations = new string[] { };
-            if (Directory.Exists(modDir + "/Animations"))
+            if (Directory.Exists(mod.dir + "/Animations"))
             {
                 modAnimations =
-                    Directory.GetDirectories(modDir + "/Animations");
+                    Directory.GetDirectories(mod.dir + "/Animations");
             }
 
             foreach (string animationDir in modAnimations)
@@ -59,5 +84,10 @@ public class ModManager : MonoBehaviour
         }
 
         return animations.ToArray();
+    }
+
+    private void AddMod(string name, string dir)
+    {
+        mods.Add(new Mod(name, dir));
     }
 }

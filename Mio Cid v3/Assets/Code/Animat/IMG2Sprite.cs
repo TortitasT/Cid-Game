@@ -9,31 +9,34 @@ public class IMG2Sprite : MonoBehaviour
     //
     // Usage from any other script:
     // MySprite = IMG2Sprite.instance.LoadNewSprite(FilePath, [PixelsPerUnit (optional)])
-    private static IMG2Sprite _instance;
+    public static IMG2Sprite instance;
 
-    public static IMG2Sprite instance
+    private void Awake()
     {
-        get
+        if (instance == null)
         {
-            //If _instance hasn't been set yet, we grab it from the scene!
-            //This will only happen the first time this reference is used.
-            if (_instance == null)
-                _instance = GameObject.FindObjectOfType<IMG2Sprite>();
-            return _instance;
+            instance = this;
+        }
+        else
+        {
+            Destroy (gameObject);
         }
     }
 
     public Sprite LoadNewSprite(string FilePath, float PixelsPerUnit = 100.0f)
     {
         // Load a PNG or JPG image from disk to a Texture2D, assign this texture to a new sprite and return its reference
-        Sprite NewSprite;
         Texture2D SpriteTexture = LoadTexture(FilePath);
-        NewSprite =
+        Sprite NewSprite =
             Sprite
                 .Create(SpriteTexture,
                 new Rect(0, 0, SpriteTexture.width, SpriteTexture.height),
-                new Vector2(0, 0),
+                new Vector2(0.5f, 0.5f),
                 PixelsPerUnit);
+
+        NewSprite.name = Path.GetFileName(FilePath);
+        NewSprite.texture.filterMode = FilterMode.Point;
+        NewSprite.texture.wrapMode = TextureWrapMode.Clamp;
 
         return NewSprite;
     }
@@ -48,7 +51,7 @@ public class IMG2Sprite : MonoBehaviour
         if (File.Exists(FilePath))
         {
             FileData = File.ReadAllBytes(FilePath);
-            Tex2D = new Texture2D(2, 2); // Create new "empty" texture
+            Tex2D = new Texture2D(1, 1, TextureFormat.ARGB32, false); // Create new "empty" texture
             if (
                 Tex2D.LoadImage(FileData) // Load the imagedata into the texture (size is set automatically)
             ) return Tex2D; // If data = readable -> return texture
