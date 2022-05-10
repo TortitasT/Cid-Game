@@ -1,0 +1,16 @@
+{
+    "name": "Animat",
+    "rootNamespace": "",
+    "references": [
+        "GUID:dbaa4f2aeb6704f9aa001b7c2857551d"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
