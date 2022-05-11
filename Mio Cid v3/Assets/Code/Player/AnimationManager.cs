@@ -4,38 +4,53 @@ using UnityEngine;
 
 public class AnimationManager : MonoBehaviour
 {
-    [SerializeField] private bool isLocal = false;
-    [SerializeField] private Animator animator;
+    [SerializeField]
+    private bool isLocal = false;
+
+    [SerializeField]
+    private Animator animator;
 
     private Rigidbody2D rb;
+
     private Vector2 vel = Vector2.zero;
+
     public Vector2 velV2 = Vector2.zero;
+
     private float velMa = 0f;
+
     private bool stopped = false;
+
     private bool isControlling = true;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
     }
+
     private void Update()
     {
         if (!stopped)
-        { // If the player is moving set the animation, if not, leave it as it was to keep facing that way.
+        {
+            // If the player is moving set the animation, if not, leave it as it was to keep facing that way.
             vel = velV2.normalized;
-            animator.SetBool("isWalking", true);
+
+            // animator.SetBool("isWalking", true);
+            GetComponent<AnimatPlayer>().SetIsWalking(true);
         }
         else
         {
-            animator.SetBool("isWalking", false);
+            // animator.SetBool("isWalking", false);
+            GetComponent<AnimatPlayer>().SetIsWalking(false);
         }
 
         if (isControlling)
         {
-            animator.SetFloat("VelX", vel.x);
-            animator.SetFloat("VelY", vel.y);
+            // animator.SetFloat("VelX", vel.x);
+            // animator.SetFloat("VelY", vel.y);
+            GetComponent<AnimatPlayer>().SetAnimDirection(vel);
         }
     }
+
     private void FixedUpdate()
     {
         if (isLocal)
@@ -64,6 +79,7 @@ public class AnimationManager : MonoBehaviour
         animator.SetFloat("VelX", direction.x);
         animator.SetFloat("VelY", direction.y);
     }
+
     public void StopLooking()
     {
         isControlling = true;
