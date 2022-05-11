@@ -13,10 +13,13 @@ public class AnimatManager : MonoBehaviour
 
         public Sprite[] frames;
 
-        public Animation(string name, Sprite[] frames)
+        public Animinfo animinfo;
+
+        public Animation(string name, Sprite[] frames, Animinfo animinfo)
         {
             this.name = name;
             this.frames = frames;
+            this.animinfo = animinfo;
         }
     }
 
@@ -51,23 +54,33 @@ public class AnimatManager : MonoBehaviour
 
             string[] animationFiles = Directory.GetFiles(animationDir, "*.png");
 
+            Animinfo animinfo = LoadAnimInfo(animationDir);
+
+            if (animinfo == null)
+            {
+                animinfo = new Animinfo("Default", 100f);
+            }
+
             List<Sprite> animationSprites = new List<Sprite>();
 
             foreach (string animationFile in animationFiles)
             {
                 Sprite sprite =
-                    IMG2Sprite.instance.LoadNewSprite(animationFile, 100f);
+                    IMG2Sprite
+                        .instance
+                        .LoadNewSprite(animationFile, animinfo.ppu);
                 animationSprites.Add (sprite);
             }
 
             AddAnimation(Path.GetFileName(animationDir),
-            animationSprites.ToArray());
+            animationSprites.ToArray(),
+            animinfo);
         }
     }
 
-    public void AddAnimation(string name, Sprite[] animation)
+    public void AddAnimation(string name, Sprite[] animation, Animinfo animinfo)
     {
-        animations.Add(new Animation(name, animation));
+        animations.Add(new Animation(name, animation, animinfo));
     }
 
     public Sprite[] GetAnimation(string name)
@@ -78,6 +91,19 @@ public class AnimatManager : MonoBehaviour
             {
                 return animation.frames;
             }
+        }
+        return null;
+    }
+
+    private Animinfo LoadAnimInfo(string animationDir)
+    {
+        string animInfoPath = animationDir + "/animinfo.json";
+
+        if (File.Exists(animInfoPath))
+        {
+            string json = File.ReadAllText(animInfoPath);
+
+            return JsonUtility.FromJson<Animinfo>(json);
         }
         return null;
     }

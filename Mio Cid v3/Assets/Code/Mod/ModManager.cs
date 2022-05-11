@@ -39,7 +39,7 @@ public class ModManager : MonoBehaviour
     private void ScanMods()
     {
         string[] scannedMods =
-            Directory.GetDirectories(Application.dataPath + "/Mods");
+            Directory.GetDirectories(Application.streamingAssetsPath + "/Mods");
 
         foreach (string modDir in scannedMods)
         {
@@ -47,7 +47,10 @@ public class ModManager : MonoBehaviour
 
             if (modInfo != null)
             {
-                AddMod (modInfo, modDir);
+                if (modInfo.enabled)
+                {
+                    mods.Add(new Mod(modInfo, modDir));
+                }
             }
         }
 

@@ -8,4 +8,6 @@ public class Modinfo
     public string name;
 
     public int order;
+
+    public bool enabled;
 }
