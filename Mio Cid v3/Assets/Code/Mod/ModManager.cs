@@ -7,16 +7,15 @@ public class ModManager : MonoBehaviour
 {
     public static ModManager instance;
 
-    // private Dictionary<string, string> mods = new Dictionary<string, string>();
     public struct Mod
     {
-        public string name;
+        public Modinfo modinfo;
 
         public string dir;
 
-        public Mod(string name, string dir)
+        public Mod(Modinfo modinfo, string dir)
         {
-            this.name = name;
+            this.modinfo = modinfo;
             this.dir = dir;
         }
     }
@@ -44,9 +43,15 @@ public class ModManager : MonoBehaviour
 
         foreach (string modDir in scannedMods)
         {
-            string modName = Path.GetFileName(modDir);
-            AddMod (modName, modDir);
+            Modinfo modInfo = LoadModInfo(modDir);
+
+            if (modInfo != null)
+            {
+                AddMod (modInfo, modDir);
+            }
         }
+
+        SortMods();
     }
 
     private IEnumerator Start()
@@ -55,7 +60,8 @@ public class ModManager : MonoBehaviour
 
         foreach (Mod mod in mods)
         {
-            AlertManager.Instance.Alert("Load " + mod.name);
+            AlertManager.Instance.Alert("Loaded " + mod.modinfo.name);
+            yield return new WaitForSeconds(0.25f);
         }
         yield return new WaitForSeconds(0.5f);
 
@@ -68,26 +74,72 @@ public class ModManager : MonoBehaviour
 
         foreach (Mod mod in mods)
         {
-            string modDir = mod.name;
-
-            string[] modAnimations = new string[] { };
             if (Directory.Exists(mod.dir + "/Animations"))
             {
-                modAnimations =
+                string[] modAnimations =
                     Directory.GetDirectories(mod.dir + "/Animations");
-            }
 
-            foreach (string animationDir in modAnimations)
-            {
-                animations.Add (animationDir);
+                foreach (string animationDir in modAnimations)
+                {
+                    string duplicate = GetDuplicate(animationDir, animations);
+                    if (duplicate != null)
+                    {
+                        animations.Remove (duplicate);
+                        Debug
+                            .Log("Removed duplicate animation: " +
+                            duplicate +
+                            " because " +
+                            animationDir +
+                            " is a duplicate.");
+                    }
+
+                    animations.Add (animationDir);
+                }
             }
         }
 
         return animations.ToArray();
     }
 
-    private void AddMod(string name, string dir)
+    private void AddMod(Modinfo modinfo, string dir)
     {
-        mods.Add(new Mod(name, dir));
+        mods.Add(new Mod(modinfo, dir));
+    }
+
+    private Modinfo LoadModInfo(string modDir)
+    {
+        if (File.Exists(modDir + "/Modinfo.json"))
+        {
+            string modInfoPath = modDir + "/Modinfo.json";
+
+            string modInfoJson = File.ReadAllText(modInfoPath);
+
+            Modinfo modInfo = JsonUtility.FromJson<Modinfo>(modInfoJson);
+
+            return modInfo;
+        }
+
+        return null;
+    }
+
+    private void SortMods()
+    {
+        mods.Sort((a, b) => a.modinfo.order.CompareTo(b.modinfo.order));
+    }
+
+    private string GetDuplicate(string animationDir, List<string> animations)
+    {
+        foreach (string storedAnimationDir in animations)
+        {
+            string storedAnimationDirName =
+                new DirectoryInfo(storedAnimationDir).Name;
+            string animationDirName = new DirectoryInfo(animationDir).Name;
+
+            if (storedAnimationDirName == animationDirName)
+            {
+                return storedAnimationDir;
+            }
+        }
+        return null;
     }
 }
