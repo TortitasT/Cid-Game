@@ -69,8 +69,7 @@ public class AnimationManager : MonoBehaviour
 
         direction = direction.normalized;
 
-        animator.SetFloat("VelX", direction.x);
-        animator.SetFloat("VelY", direction.y);
+        GetComponent<AnimatPlayer>().SetAnimDirection(direction);
     }
 
     public void StopLooking()

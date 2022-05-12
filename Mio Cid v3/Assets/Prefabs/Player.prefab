@@ -140,7 +140,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isLocal: 1
-  animator: {fileID: 664863761032505445}
   velV2: {x: 0, y: 0}
 --- !u!114 &1655624191
 MonoBehaviour:
@@ -165,7 +164,6 @@ GameObject:
   m_Component:
   - component: {fileID: 664863761032505443}
   - component: {fileID: 664863761032505444}
-  - component: {fileID: 664863761032505445}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -238,22 +236,3 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &664863761032505445
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 664863761032505442}
-  m_Enabled: 0
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 5b118b1a6de600648bb177ffeeaf305e, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
