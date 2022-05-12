@@ -7,9 +7,6 @@ public class AnimationManager : MonoBehaviour
     [SerializeField]
     private bool isLocal = false;
 
-    [SerializeField]
-    private Animator animator;
-
     private Rigidbody2D rb;
 
     private Vector2 vel = Vector2.zero;
@@ -34,19 +31,15 @@ public class AnimationManager : MonoBehaviour
             // If the player is moving set the animation, if not, leave it as it was to keep facing that way.
             vel = velV2.normalized;
 
-            // animator.SetBool("isWalking", true);
             GetComponent<AnimatPlayer>().SetIsWalking(true);
         }
         else
         {
-            // animator.SetBool("isWalking", false);
             GetComponent<AnimatPlayer>().SetIsWalking(false);
         }
 
         if (isControlling)
         {
-            // animator.SetFloat("VelX", vel.x);
-            // animator.SetFloat("VelY", vel.y);
             GetComponent<AnimatPlayer>().SetAnimDirection(vel);
         }
     }

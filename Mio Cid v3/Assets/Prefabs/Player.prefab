@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 664863760615431560}
   - component: {fileID: 1634352161137174783}
   - component: {fileID: 664863760615431561}
+  - component: {fileID: 1655624191}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -141,6 +142,19 @@ MonoBehaviour:
   isLocal: 1
   animator: {fileID: 664863761032505445}
   velV2: {x: 0, y: 0}
+--- !u!114 &1655624191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 664863760615431572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba96bb3617dd943cea3b2983738183b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteRenderer: {fileID: 664863761032505444}
 --- !u!1 &664863761032505442
 GameObject:
   m_ObjectHideFlags: 0
@@ -232,7 +246,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 664863761032505442}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 5b118b1a6de600648bb177ffeeaf305e, type: 2}
   m_CullingMode: 0
