@@ -1,12 +1,8 @@
 # Mio Cid (unity project)
 
-This repo will contain the source code for the game Mio Cid, a medieval multiplayer ARPG.
+This repo will contain the source code for the game Mio Cid, a multiplayer ARPG framework.
 
 This project now has an [Itch.io page](https://tortitas.itch.io/mio-cid-v3).
-
-## Building
-
-Remember to copy the folder Assets/Mods into unity's data folder for it to load the default mod.
 
 ## Resources
 
