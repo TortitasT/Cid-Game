@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Firesplash.UnityAssets.SocketIO
 {
@@ -20,6 +21,10 @@ namespace Firesplash.UnityAssets.SocketIO
         public SIOStatus Status { get; internal set; } = SIOStatus.DISCONNECTED;
 
         protected string InstanceName;
+        protected string GameObjectName;
+        protected string targetAddress;
+        protected bool enableAutoReconnect;
+        protected SIOAuthPayload authPayload = null;
 
         public virtual string SocketID
         {
@@ -34,10 +39,13 @@ namespace Firesplash.UnityAssets.SocketIO
         /// <param name="data">The data payload of the transmitted event. Plain text or stringified JSON object.</param>
         public delegate void SocketIOEvent(string data);
 
-        internal SocketIOInstance(string instanceName, string targetAddress, bool enableReconnect)
+        internal SocketIOInstance(string gameObjectName, string targetAddress, bool enableReconnect)
         {
-            InstanceName = instanceName;
             eventCallbacks = new Dictionary<string, List<SocketIOEvent>>();
+            this.InstanceName = gameObjectName;
+            this.GameObjectName = gameObjectName;
+            this.targetAddress = targetAddress;
+            this.enableAutoReconnect = enableReconnect;
         }
 
         protected void PrepareDestruction()
@@ -56,19 +64,46 @@ namespace Firesplash.UnityAssets.SocketIO
         }
 
         /// <summary>
-        /// Connect this Socket.IO instance
+        /// Connect this Socket.IO instance using the stored parameters from last connect / component configuration
         /// </summary>
         public virtual void Connect()
         {
-            Connect(null);
+            Connect(targetAddress, enableAutoReconnect, authPayload);
         }
 
         /// <summary>
-        /// Connect this Socket.IO instance
+        /// Connect this Socket.IO instance using the stored parameters from last connect / component configuration but with (new) auth data
         /// </summary>
-        /// <param name="authPayload">An instance of SIOAuthPayload to be sent upon connection. Can for example be used to send an authentication token.</param>
+        /// <param name="authPayload">An instance of SIOAuthPayload to be sent upon (re-)connection. Can for example be used to send an authentication token.</param>
         public virtual void Connect(SIOAuthPayload authPayload)
         {
+            Connect(targetAddress, enableAutoReconnect, authPayload);
+        }
+
+        /// <summary>
+        /// Connect this Socket.IO instance to a new target (this even works after the initial connect)
+        /// This method sends a previously used auth payload (if available)
+        /// </summary>
+        /// <param name="targetAddress">The server / IO address to connect to. Has to start with http:// or https:// (substitute ws with http or wss with https): http[s]://<Hostname>[:<Port>][/<path>]</param>
+        /// <param name="enableReconnect">Shall we reconnect automatically on an unexpected connection loss?</param>
+        public virtual void Connect(string targetAddress, bool enableReconnect)
+        {
+            Connect(targetAddress, enableAutoReconnect);
+        }
+
+        /// <summary>
+        /// Connect this Socket.IO instance to a new target (this even works after the initial connect)
+        /// </summary>
+        /// <param name="targetAddress">The server / IO address to connect to. Has to start with http:// or https:// (substitute ws with http or wss with https): http[s]://<Hostname>[:<Port>][/<path>]</param>
+        /// <param name="enableReconnect">Shall we reconnect automatically on an unexpected connection loss?</param>
+        /// <param name="authPayload">Null or an instance of SIOAuthPayload to be sent upon connection. Can for example be used to send an authentication token.</param>
+        public virtual void Connect(string targetAddress, bool enableReconnect, SIOAuthPayload authPayload)
+        {
+            if (!targetAddress.StartsWith("http://") && !targetAddress.StartsWith("https://")) throw new UriFormatException("Socket.IO Address has to start with http:// or https:// if provided programmatically");
+
+            this.targetAddress = targetAddress;
+            this.enableAutoReconnect = enableReconnect;
+            this.authPayload = authPayload;
         }
 
         public virtual void Close()

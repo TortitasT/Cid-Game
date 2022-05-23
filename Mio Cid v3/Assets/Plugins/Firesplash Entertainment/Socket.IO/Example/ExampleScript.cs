@@ -116,14 +116,18 @@ public class ExampleScript : MonoBehaviour
 
 
         //We are now ready to actually connect
-        //The simnple way:
+        //The simnple way will use the parameters set in the inspector (or with a former call to Connect(...)):
         //sioCom.Instance.Connect();
 
-        //Okay... For this example we will also show how to transmit a token or other data for authentication purposes:
+        //For this example we will also show how to transmit a token or other data for authentication purposes:
         //PLEASE NOTE: You can only transmit primitives using the "authPayload". int, string, float...
         SIOAuthPayload auth = new SIOAuthPayload();
         auth.AddElement("id", 1234); //The server will access this using socket.handshake.auth.id
         auth.AddElement("token", "UnitySample-abc123zyx"); //The server will access this using socket.handshake.auth.token
-        sioCom.Instance.Connect(auth);
+        //You could again use the component config for the target by using
+        //sioCom.Instance.Connect(auth);
+
+        //But the following command shows how you can programmatically connect to any server at any given time - in this case including our previously set auth information
+        sioCom.Instance.Connect("https://sio-v4-example.unityassets.i01.clu.firesplash.de", false, auth);
     }
 }

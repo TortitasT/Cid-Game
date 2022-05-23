@@ -1582,6 +1582,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1523425499}
   - component: {fileID: 1523425500}
+  - component: {fileID: 1523425498}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -1589,6 +1590,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1523425498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1523425497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a51bb71fdd88524994e50b1dd0eb958, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  socketIOAddress: 
+  secureConnection: 0
+  autoConnect: 0
+  autoReconnect: 0
 --- !u!4 &1523425499
 Transform:
   m_ObjectHideFlags: 0

@@ -11,13 +11,13 @@ namespace Firesplash.UnityAssets.SocketIO.Internal
     internal class SocketIOWebGLInstance : SocketIOInstance
     {
         [System.Runtime.InteropServices.DllImport("__Internal")]
-        private static extern void CreateSIOInstance(string instanceName, string targetAddress, int enableReconnect);
+        private static extern void CreateSIOInstance(string instanceName, string gameObjectName, string targetAddress, int enableReconnect);
 		
         [System.Runtime.InteropServices.DllImport("__Internal")]
         private static extern void DestroySIOInstance(string instanceName);
 
         [System.Runtime.InteropServices.DllImport("__Internal")]
-        private static extern void ConnectSIOInstance(string instanceName, string payload);
+        private static extern void ConnectSIOInstance(string instanceName, string targetAddr, int enableReconnect, string payload);
 
         [System.Runtime.InteropServices.DllImport("__Internal")]
         private static extern void CloseSIOInstance(string instanceName);
@@ -39,11 +39,12 @@ namespace Firesplash.UnityAssets.SocketIO.Internal
             get; internal set;
         }
 
-        internal SocketIOWebGLInstance(string instanceName, string targetAddress, bool enableReconnect) : base(instanceName, targetAddress, enableReconnect)
+        internal SocketIOWebGLInstance(string gameObjectName, string targetAddress, bool enableReconnect) : base(gameObjectName, targetAddress, enableReconnect)
         {
-            SocketIOManager.LogDebug("Creating WebGL-Based Socket.IO instance for " + instanceName);
-            this.InstanceName = instanceName;
-            CreateSIOInstance(instanceName, targetAddress, enableReconnect ? 1 : 0);
+            SocketIOManager.LogDebug("Creating WebGL-Based Socket.IO instance for " + gameObjectName);
+            this.GameObjectName = gameObjectName;
+            this.InstanceName = this.GameObjectName + "_" + System.Guid.NewGuid().ToString("N");
+            CreateSIOInstance(this.InstanceName, this.GameObjectName, targetAddress, enableReconnect ? 1 : 0);
         }
 		
 		~SocketIOWebGLInstance() {
@@ -51,12 +52,13 @@ namespace Firesplash.UnityAssets.SocketIO.Internal
 			DestroySIOInstance(InstanceName);
 		}
 
-        public override void Connect(SIOAuthPayload payloadObject)
+        public override void Connect(string targetAddress, bool enableReconnect, SIOAuthPayload authPayload)
         {
+            base.Connect(targetAddress, enableReconnect, authPayload);
+
             string payload = "";
-            if (payloadObject != null) payload = payloadObject.GetPayloadJSON();
-            ConnectSIOInstance(InstanceName, payload);
-            base.Connect(payloadObject);
+            if (this.authPayload != null) payload = this.authPayload.GetPayloadJSON();
+            ConnectSIOInstance(InstanceName, targetAddress, enableReconnect ? 1 : 0, payload);
         }
 
         public override void Close()

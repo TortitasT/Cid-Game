@@ -23,14 +23,10 @@ internal class SocketIONativeInstance : SocketIOInstance
 
     Thread WebSocketReaderThread, WebSocketWriterThread, WatchdogThread;
 
-    string targetAddress;
     int pingInterval, pingTimeout;
     DateTime lastPing;
 
     int ReconnectAttempts = 0;
-    bool enableAutoReconnect = true;
-
-    SIOAuthPayload onConnectPayload;
 
     Parser parser;
 
@@ -42,14 +38,9 @@ internal class SocketIONativeInstance : SocketIOInstance
         get; internal set;
     }
 
-    internal SocketIONativeInstance(string instanceName, string targetAddress, bool enableReconnect) : base(instanceName, targetAddress, enableReconnect)
+    internal SocketIONativeInstance(string gameObjectName, string targetAddress, bool enableReconnect) : base(gameObjectName, targetAddress, enableReconnect)
     {
-        SocketIOManager.LogDebug("Creating Native Socket.IO instance for " + instanceName);
-        this.InstanceName = instanceName;
-        this.enableAutoReconnect = enableReconnect;
-
-        this.targetAddress = "ws" + targetAddress.Substring(4);
-        if (this.targetAddress.IndexOf("/", 8) == -1) this.targetAddress += "/socket.io/";
+        SocketIOManager.LogDebug("Creating Native Socket.IO instance for " + gameObjectName);
 
         //Initialize MIT-Licensed helpers
         parser = new Parser();
@@ -65,9 +56,9 @@ internal class SocketIONativeInstance : SocketIOInstance
         PrepareDestruction(); //This makes sure that we cleanly disconnect instead of forcefully dropping connection
     }
 
-    public override void Connect(SIOAuthPayload authPayload)
+    public override void Connect(string targetAddress, bool enableReconnect, SIOAuthPayload authPayload)
     {
-        onConnectPayload = authPayload;
+        base.Connect(targetAddress, enableReconnect, authPayload);
 
         Task.Run(async () =>
         {
@@ -90,7 +81,10 @@ internal class SocketIONativeInstance : SocketIOInstance
 
             try
             {
-                Uri baseUri = new Uri(targetAddress);
+                string websocketAddress = "ws" + targetAddress.Substring(4);
+                if (targetAddress.IndexOf("/", 8) == -1) websocketAddress += "/socket.io/";
+                Uri baseUri = new Uri(websocketAddress);
+
                 SocketIOManager.LogDebug("Connecting to server " + baseUri.Scheme + "://" + baseUri.Host + ":" + baseUri.Port + " on path " + baseUri.AbsolutePath);
                 Uri connectTarget = new Uri(baseUri.Scheme + "://" + baseUri.Host + ":" + baseUri.Port + baseUri.AbsolutePath + "?EIO=4&transport=websocket" + (baseUri.Query.Length > 1 ? "&" + baseUri.Query.Substring(1) : ""));
                 await Socket.ConnectAsync(connectTarget, CancellationToken.None);
@@ -107,7 +101,7 @@ internal class SocketIONativeInstance : SocketIOInstance
             {
                 if (ReconnectAttempts == 0)
                 {
-                    SocketIOManager.LogError(InstanceName + ": " + e.GetType().Name + " - " + e.Message);
+                    SocketIOManager.LogError(InstanceName + ": " + e.GetType().Name + " - " + e.Message + " (" + targetAddress + ")");
                     if (e.GetType().Equals(typeof(WebSocketException))) SocketIOManager.LogWarning(InstanceName + ": Please make sure that your server supports the 'websocket' transport. Load-Balancers, Reverse Proxies and similar appliances often require special configuration.");
                     if (e.GetType().Equals(typeof(System.Security.Authentication.AuthenticationException))) SocketIOManager.LogWarning(InstanceName + ": Please verify that your server is using a valid SSL certificate which is trusted by this client's system CA store");
                     SIODispatcher.Instance.Enqueue(new Action(() => { RaiseSIOEvent("connect_error", e.GetType().Name + " - " + e.Message); }));
@@ -130,7 +124,7 @@ internal class SocketIONativeInstance : SocketIOInstance
 
                 //An error occured while connecting, we need to reconnect.
                 Thread.Sleep(500 + (ReconnectAttempts++ * 1000));
-                if (!cTokenSrc.IsCancellationRequested) Connect();
+                if (!cTokenSrc.IsCancellationRequested) Connect(authPayload);
                 return;
             }
 
@@ -161,8 +155,6 @@ internal class SocketIONativeInstance : SocketIOInstance
                 return;
             }
         });
-
-        base.Connect(authPayload);
     }
 
     //This stops all threads and work
@@ -329,7 +321,7 @@ internal class SocketIONativeInstance : SocketIOInstance
 
                         //Serialize Payload
                         string payload = "";
-                        if (onConnectPayload != null) payload = onConnectPayload.GetPayloadJSON();
+                        if (authPayload != null) payload = authPayload.GetPayloadJSON();
 
                         //Hey Server, how are you today?
                         EmitPacket(new SocketPacket(EnginePacketType.MESSAGE, SocketPacketType.CONNECT, 0, "/", -1, payload));

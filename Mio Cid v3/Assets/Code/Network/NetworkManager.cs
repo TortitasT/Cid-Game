@@ -150,8 +150,6 @@ public class NetworkManager : MonoBehaviour
 
                 PlayerLeave(responsePars.id);
             });
-
-        io.Instance.Connect(); // Connect at the end
     }
 
     private void FixedUpdate()
@@ -210,25 +208,23 @@ public class NetworkManager : MonoBehaviour
 
     public void Connect(string address, string port)
     {
-        // OK so the plugin won't work so this is the workaround, just deleting the component and reinstanciating.
-        if (GetComponent<SocketIOCommunicator>() != null)
-        {
-            Destroy(GetComponent<SocketIOCommunicator>());
-            this.gameObject.AddComponent<SocketIOCommunicator>();
-        }
-        else
-        {
-            this.gameObject.AddComponent<SocketIOCommunicator>();
-        }
-
+        // if (GetComponent<SocketIOCommunicator>() != null)
+        // {
+        //     Destroy(GetComponent<SocketIOCommunicator>());
+        //     this.gameObject.AddComponent<SocketIOCommunicator>();
+        // }
+        // else
+        // {
+        //     this.gameObject.AddComponent<SocketIOCommunicator>();
+        // }
         io = GetComponent<SocketIOCommunicator>();
 
-        io.socketIOAddress = address + ":" + port + "/socket.io/";
-        io.autoConnect = false;
-        io.autoReconnect = true;
-        io.secureConnection = false;
-
-        LoadEvents();
+        // io.socketIOAddress = address + ":" + port + "/socket.io/";
+        // io.autoConnect = false;
+        // io.autoReconnect = true;
+        // io.secureConnection = false;
+        // LoadEvents();
+        io.Instance.Connect(address + ":" + port + "/socket.io/", false); // Connect at the end
     }
 
     public void Disconnect()
