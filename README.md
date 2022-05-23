@@ -27,3 +27,5 @@ Remember to copy the folder Assets/Mods into unity's data folder for it to load 
 - [Inkle Studios](https://www.inklestudios.com/) Ink language
 - [Johan Peitz](https://johanpeitz.itch.io/) picoCAD
 - [Kenney](https://kenney.itch.io/) Assets
+- [pix3m](https://opengameart.org/content/pixel-fonts-by-pix3m)
+- [ZiNGOT](https://opengameart.org/content/bitmap-font-pack)
