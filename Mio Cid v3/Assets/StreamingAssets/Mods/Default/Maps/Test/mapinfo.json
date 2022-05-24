@@ -1,0 +1,23 @@
+{
+	"name": "Test Map",
+	"floor": {
+		"1": {
+			"name": "Grass_1",
+			"sprite": "grass",
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0
+		}
+	},
+	"walls": {
+		"1": {
+			"name": "Wall_1",
+			"sprite": "wall",
+			"width": 1,
+			"height": 1,
+			"x": 0,
+			"y": 0
+		}
+	}
+}
