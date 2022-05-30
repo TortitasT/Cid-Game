@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class TargetingManager : MonoBehaviour
@@ -20,6 +21,35 @@ public class TargetingManager : MonoBehaviour
 
     private GameObject target;
 
+    [SerializeField]
+    private GameObject uiName;
+
+    [SerializeField]
+    private GameObject uiCanvas;
+
+    private void Update()
+    {
+        if (target != null)
+        {
+            if (
+                Vector2
+                    .Distance(target.transform.position,
+                    GameObject.FindWithTag("Player").transform.position) >
+                50
+            )
+            {
+                target = null;
+            }
+
+            uiCanvas.SetActive(true);
+            uiName.GetComponent<TextMeshPro>().SetText(target.name);
+        }
+        else
+        {
+            uiCanvas.SetActive(false);
+        }
+    }
+
     public void SetTarget(GameObject target)
     {
         this.target = target;
@@ -38,5 +68,10 @@ public class TargetingManager : MonoBehaviour
     public bool HasTarget()
     {
         return target != null;
+    }
+
+    public bool IsTarget(GameObject target)
+    {
+        return this.target == target;
     }
 }

@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class Targetable : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private Collider2D collider;
+
+    private void Awake()
     {
-        
+        collider = GetComponent<Collider2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnMouseEnter()
     {
-        
+        TargetingManager.instance.SetTarget (gameObject);
     }
 }
